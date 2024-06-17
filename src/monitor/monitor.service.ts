@@ -1,26 +1,66 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMonitorDto } from './dto/create-monitor.dto';
-import { UpdateMonitorDto } from './dto/update-monitor.dto';
+import { CreateMonitorStatusDto,UpdateMonitorStatusDto } from './dto/monitor.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MonitorService {
-  create(createMonitorDto: CreateMonitorDto) {
-    return 'This action adds a new monitor';
+  constructor(
+      private readonly prismaService: PrismaService,
+  ){}
+  async create(createMonitorDto: CreateMonitorStatusDto) {
+    const create = await this.prismaService.monitorStatus.create({
+      data: {
+        ...createMonitorDto
+      }
+    }).catch((e)=>{
+      console.log("create e",e)
+      console.log("create e code",e.code)
+      return null
+    });
+    return {"data":create}
   }
 
-  findAll() {
-    return `This action returns all monitor`;
+  async findAll() {
+    const monitors = await this.prismaService.monitorStatus.findMany({ }).catch((e)=>{
+      console.log("create e",e)
+      console.log("create e code",e.code)
+      return null
+    });
+
+    return {"data":monitors}
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} monitor`;
+  async findOne(id: string) {
+    const monitors = await this.prismaService.monitorStatus.findUnique({
+      where:{
+        id:id
+      }
+     }).catch((e)=>{
+      console.log("create e",e)
+      console.log("create e code",e.code)
+      return null
+    });
+
+    return {"data":monitors}
   }
 
-  update(id: number, updateMonitorDto: UpdateMonitorDto) {
-    return `This action updates a #${id} monitor`;
+  async update(id: string, updateMonitorDto: UpdateMonitorStatusDto) {
+    const update = await this.prismaService.monitorStatus.update({
+      where:{
+        id:id
+      },
+      data: {
+        ...updateMonitorDto
+      }
+    }).catch((e)=>{
+      console.log("create e",e)
+      console.log("create e code",e.code)
+      return null
+    });
+    return {"data":update}
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} monitor`;
   }
 }

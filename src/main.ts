@@ -18,10 +18,10 @@ async function bootstrap() {
     }
 );
   const config = new DocumentBuilder()
-    .setTitle('Watch Platform')
-    .setDescription('The Watch API description')
+    .setTitle('Diaplay Platform')
+    .setDescription('The Diaplay API description')
     .setVersion('1.0')
-    .addTag('watch')
+    .addTag('display')
     .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('apitest', app, document);

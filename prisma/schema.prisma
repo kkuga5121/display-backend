@@ -12,3 +12,50 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model MediaFile {
+  id          String   @id @default(cuid())
+  fileName    String
+  oriName     String? 
+  fileType    String
+  fileSize    Int
+  filePath    String
+  createdAt  DateTime     @default(now()) @map(name: "created_at")
+  updatedAt  DateTime     @updatedAt @map(name: "updated_at")
+  description String?  // Optional field
+  monitors    MonitorStatus[]
+  sequences  MonitorSequence[]  @relation("mediaSequence")
+ 
+  @@map(name: "mediafile")
+}
+
+model MonitorStatus {
+  id          String   @id @default(cuid())
+  createdAt  DateTime     @default(now()) @map(name: "created_at")
+  updatedAt  DateTime     @updatedAt @map(name: "updated_at")
+  monitorAddress String 
+  monitorPort   String
+  mediaId     String?
+  mediafile   MediaFile?  @relation(fields: [mediaId], references: [id])
+  status      String    //play stop standby
+  sequenceId  String?
+  sequence    MonitorSequence? @relation(fields: [sequenceId], references: [id])
+ 
+  @@map(name: "monitorstatus")
+}
+
+enum Status {
+  play
+  stop
+  standby
+}
+
+model MonitorSequence{
+
+  id          String   @id @default(cuid())
+  createdAt  DateTime     @default(now()) @map(name: "created_at")
+  updatedAt  DateTime     @updatedAt @map(name: "updated_at")
+  sequenceCommand    Json
+  mediafiles  MediaFile[]  @relation("mediaSequence")
+  monitors    MonitorStatus[]
+  @@map(name: "monitorsequence")
+}
